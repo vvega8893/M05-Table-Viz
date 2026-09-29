@@ -1,0 +1,189 @@
+---
+title: "M05-Visualizing Data with Tables for MSDM CEP"
+author: "Veronica Vega"
+date: "`r format(Sys.time())`"
+
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-expand: true
+    number-sections: true
+    code-link: true
+    code-tools: true
+    embed-resources: true
+    theme: cosmo
+
+editor: visual
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  freeze: auto
+---
+
+```{r}
+library(tidyverse)
+library(gt)
+library(gtExtras)
+```
+
+------------------------------------------------------------------------
+
+## \# Introduction
+
+This report summarizes what I learned from the module on visualizing data with tables using the gt and gtExtras packages. The report also demonstrates how professional tables can be created using Quarto and R for use in business presentations and analytics reports.
+
+::: callout-note
+The purpose of this assignment is to demonstrate table visualization techniques and reflect on how tables support data-driven decision making.
+:::
+
+\# Learning Reflection
+
+\## Prompt: Summarize what you learned from the videos you watched.
+
+The videos demonstrated how the gt package can be used to transform ordinary datasets into highly professional tables suitable for reports, dashboards, and executive presentations. I learned how to apply labels, formatting, colors, groupings, source notes, footnotes, and spanner labels to improve the visual appearance and readability of tables. I also learned how Quarto can be used to organize data analysis and combine text, code, and visual outputs into a single professional report.
+
+\## Prompt: What did you like about the gt and gtExtra packages demonstrated in the videos?
+
+The feature I liked most about gt was the ability to create publication-quality tables with minimal code. I also found gtExtras very helpful because it allows the creation of small embedded visualizations inside tables. This makes it possible to combine detailed numerical information and visual insights in a single display, improving communication with stakeholders.
+
+\## Prompt: How do tables complement charts for data visualization?
+
+Charts help users quickly identify trends and patterns, while tables allow users to view exact numerical values. The combination of charts and tables provides a balance between visual interpretation and detailed information. Tables can support charts by providing precision and context for decision makers.
+
+\## Prompt: Under what circumstances would you prefer to use tables rather than charts to visualize data?
+
+I would prefer tables when decision makers need to see exact values rather than general patterns. Tables are especially useful when presenting financial data, performance metrics, rankings, and comparisons involving multiple variables. Tables are also useful when stakeholders need to perform detailed reviews of analytical results.
+
+\# Table Visualization Example
+
+\## Data Preparation
+
+```{r}
+
+pizza_summary <- pizzaplace |>
+  group_by(size) |>
+  summarize(
+    Orders = n(),
+    Average_Price = mean(price),
+    Total_Revenue = sum(price)
+  )
+```
+
+## Main Summary Table
+
+```{r}
+pizza_summary |>
+  gt(
+    rowname_col = "size"
+) |>
+tab_header(
+  title = "Pizza Sales Summary",
+  subtitle = "Descriptive Statistics by Pizza Size"
+) |>
+tab_stubhead(
+  label = "Pizza Size"
+) |>
+tab_spanner(
+  label = "Sales Metrics",
+  columns = c(
+    Orders,
+    Average_Price,
+    Total_Revenue
+  )
+) |>
+cols_label(
+  Orders = "Total Orders",
+  Average_Price = "Average Price",
+  Total_Revenue = "Total Revenue"
+) |>
+fmt_number(
+  columns = Orders,
+  decimals = 0
+) |>
+fmt_currency(
+  columns = c(
+    Average_Price,
+    Total_Revenue
+),
+  currency = "USD"
+) |>
+data_color( 
+  columns = Total_Revenue
+) |>
+tab_footnote(
+  footnote =
+    "Revenue values based on sample pizza data."
+) |>
+tab_source_note(
+  source_note =
+    "Source: gt package pizzaplace dataset."
+  )
+```
+
+## Table with Embedded Visualization
+
+```{r}
+pizza_summary |>
+  gt() |>
+  gt_plt_bar_pct(
+    Orders
+  ) |>
+  tab_header(
+    title =
+      "Orders with Embedded Bar Charts"
+)
+```
+
+\`\` \# Cross-Reference Example
+
+Table @tbl-demo demonstrates how descriptive statistics can be combined with table formatting techniques.
+
+```{r}
+#| label: tbl-demo
+
+pizza_summary
+```
+
+# Key Takeaway
+
+> Professional tables improve the communication of analytical findings and provide stakeholders with clear and actionable information.
+
+Tables provide a useful complement to visual dashboards and charts.[^1]
+
+[^1]: Footnotes allow additional explanatory information without interrupting the report flow.
+
+# Why This Table Is Valuable
+
+The table would be useful in an MSDM project presentation because it combines precise numerical information with visual indicators in a single view. Stakeholders can quickly compare performance across categories while also reviewing exact values. This format improves communication and supports data-driven decision making
+
+# Additional Notes {.panel-tabset}
+
+## Benefits
+
+- Easy to read
+- Professional appearance
+- Stakeholder friendly
+
+## Challenges
+
+- Requires data preparation
+- Requires familiarity with R
+
+## Future Use
+
+- Dashboards
+- Executive reporting
+- Marketing analytics
+
+# Appendix
+
+## GitHub Repository
+
+<https://github.com/vvega8893/M05-Table-Viz.git>
+
+## GitHub Pages
+
+git\@github.com:vvega8893/M05-Table-Viz.git
